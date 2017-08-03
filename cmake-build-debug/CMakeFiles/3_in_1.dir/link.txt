@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/3_in_1.dir/main.cpp.o CMakeFiles/3_in_1.dir/Graph.cpp.o  -o 3_in_1 

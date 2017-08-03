@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/hd1/home/wushuang/CLionProjects/3-in-1/Graph.cpp
+Graph.h
+/mnt/hd1/home/wushuang/CLionProjects/3-in-1/Graph.h
+
+/mnt/hd1/home/wushuang/CLionProjects/3-in-1/Graph.h
+unordered_set
+-
+unordered_map
+-
+iostream
+-
+fstream
+-
+vector
+-
+list
+-
+set
+-
+algorithm
+-
+
+/mnt/hd1/home/wushuang/CLionProjects/3-in-1/main.cpp
+fstream
+-
+Graph.h
+/mnt/hd1/home/wushuang/CLionProjects/3-in-1/Graph.h
+sys/time.h
+-
+

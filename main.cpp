@@ -44,7 +44,7 @@ int main() {
 //    set<int> nr = graph.getRRadiusNodes(8,3);
 //    graph.printSet(nr);
 
-    vector<unordered_map<int,unordered_set<int>>>  test = graph.getAllRRadiusGraph(2);
+    vector<unordered_map<int,unordered_set<int>>>  test = graph.getAllMaximalRRadiusGraph(2);
     for (const auto& elem: test) {
         cout<<"========="<<endl;
         graph.printMap(elem);

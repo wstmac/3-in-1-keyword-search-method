@@ -44,7 +44,7 @@ public:
 
     void printSet(set<int> s);
 
-    vector<unordered_map<int, unordered_set<int>>> getAllRRadiusGraph(int radius);
+    vector<unordered_map<int, unordered_set<int>>> getAllMaximalRRadiusGraph(int radius);
 };
 
 

@@ -139,6 +139,9 @@ unordered_map<int, unordered_set<int>> Graph::getRRadiusGraph(int nodeID, int ra
         keys.insert(elem.first);
     }
 
+    //for every node k in the graph
+    //if the r neighbor set of k is not the subset of the r-1 neighbor set of curNode
+    //then it is a r-radius graph; otherwise just return empty graph
     for (const auto& elem: keys) {
         //all the node that is less than radius-1 away from elem node
         set<int> nodes = getRRadiusNodes(elem, radius - 1);
@@ -148,6 +151,24 @@ unordered_map<int, unordered_set<int>> Graph::getRRadiusGraph(int nodeID, int ra
             return emptyGraph;
         }
     }
+
+    //LEMMA 2: find maximal r-radius graph
+
+    for (const auto& elem: keys) {
+        //all the node that is less than radius-1 away from elem node
+        set<int> nodes = getRRadiusNodes(elem, radius);
+
+        if(keys != nodes) {
+            if(!includes(nodes.begin(), nodes.end(), keys.begin(), keys.end())) {
+                continue;
+            } else {
+                unordered_map<int, unordered_set<int>> emptyGraph;
+                return emptyGraph;
+            }
+        }
+    }
+
+
     return rRadiusGraph;
 }
 
@@ -213,11 +234,13 @@ void Graph::printMap(unordered_map<int, unordered_set<int>> um) {
 }
 
 
-vector<unordered_map<int,unordered_set<int>>> Graph::getAllRRadiusGraph(int radius) {
+vector<unordered_map<int,unordered_set<int>>> Graph::getAllMaximalRRadiusGraph(int radius) {
     vector<unordered_map<int,unordered_set<int>>> rRadiusGraphs;
     for(int i=0; i < size; ++i) {
         unordered_map<int,unordered_set<int>> graph = getRRadiusGraph(i,radius);
         if(graph.size()!=0) {
+            //find maximum r-radius graph
+
             rRadiusGraphs.push_back(graph);
         }
     }

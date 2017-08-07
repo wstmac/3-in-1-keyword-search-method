@@ -3,6 +3,7 @@
 #include <sys/time.h>
 
 
+
 inline
 unsigned long long getTime() {
     struct timeval tv;
@@ -32,25 +33,74 @@ int main() {
 
 
     Graph graph;
+
+
+    unsigned long long end1 = getTime();
+
+    //graph.readNode("/mnt/hd1/home/wushuang/node.csv");
     graph.readNode("/mnt/hd1/home/wushuang/testNode.csv");
+
+
+    unsigned long long end2 = getTime();
+
+    cout<<"It uses "<<getInterval(end1,end2)<<"ms to read node"<<endl;
+
+//    graph.readEdge("/mnt/hd1/home/wushuang/edge.csv");
     graph.readEdge("/mnt/hd1/home/wushuang/testEdge.csv");
 
 
     //graph.printGraph();
 
-//    unordered_map<int, unordered_set<int>> rRadiusGraph = graph.getRRadiusGraph(1, 2);
-//    graph.printMap(rRadiusGraph);
 
-//    set<int> nr = graph.getRRadiusNodes(8,3);
-//    graph.printSet(nr);
 
-    vector<unordered_map<int,unordered_set<int>>>  test = graph.getAllMaximalRRadiusGraph(2);
-    for (const auto& elem: test) {
-        cout<<"========="<<endl;
-        graph.printMap(elem);
-    }
+
+    unsigned long long end3 = getTime();
+    cout<<"It uses "<<getInterval(end2,end3)<<"ms to read edge"<<endl;
+//
+//
+//    vector<unordered_map<int,unordered_set<int>>> arr;
+//    for(int i=3000; i<4000; i++){
+//        unordered_map<int,unordered_set<int>>  test = graph.getMaximalRRadiusGraph(i,2);
+//        arr.push_back(test);
+//    }
+//
+//
+//    unsigned long long end4 = getTime();
+//    cout<<"It uses "<<getInterval(end3,end4)<<"ms to get maximal r-graph 3000-4000"<<endl;
+//
+//
+//
+//    int i = 0;
+//    for (const auto& elem: arr) {
+//        if(elem.size() != 0) {
+//            i++;
+//        }
+//        //graph.printMap(elem);
+//    }
+//    cout<<"There are "<<i<<" graph returns"<<endl;
+
+    vector<unordered_map<int, unordered_set<int>>> rRadiusMaximalGraph = graph.getAllMaximalRRadiusGraph(2);
+
+
+
+
     unsigned long long end = getTime();
 
-    cout<<"The program uses "<<getInterval(start, end)<<"ms";
+    cout<<"It uses "<<getInterval(end3,end)<<"ms to print graph"<<endl;
+
+    cout<<"The program uses "<<getInterval(start, end)<<"ms"<<endl;
+
+    cout<<"Node Content Table:\n";
+    graph.printNodeContent();
+
+    cout<<"Ketword Graph Table\n";
+    graph.printKeywordGraphTable();
+
+    cout<<"Graph Index Table\n";
+    graph.printGraphIndexTable();
+
+
+
+
     return 0;
 }

@@ -1,0 +1,6 @@
+It uses 11973.8ms to read node
+It uses 28988.6ms to read edge
+It uses 1.01385e+07ms to get maximal r-graph 5000-10000
+There are 2 graph returns
+It uses 0.384ms to print graph
+The program uses 1.01795e+07ms

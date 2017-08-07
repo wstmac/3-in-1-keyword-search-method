@@ -12,8 +12,11 @@
 #include <list>
 #include <set>
 #include <algorithm>
+#include<boost/tokenizer.hpp>
+
 
 using namespace std;
+using namespace boost;
 
 class Graph {
 private:
@@ -24,6 +27,10 @@ private:
     vector<string> nodeContent;
 
     void addEdge(int src, int dest);
+
+    unordered_map<string, unordered_set<int>> keywordGraphTable;
+
+    unordered_map<int, unordered_map<int,unordered_set<int>>> graphIndexTable;
 
 public:
     Graph();
@@ -36,7 +43,7 @@ public:
 
     void readEdge(std::string edgeFilePath);
 
-    unordered_map<int, unordered_set<int>> getRRadiusGraph(int nodeID, int radius);
+    unordered_map<int, unordered_set<int>> getMaximalRRadiusGraph(int nodeID, int radius);
 
     void printMap(unordered_map<int, unordered_set<int>> um);
 
@@ -45,6 +52,12 @@ public:
     void printSet(set<int> s);
 
     vector<unordered_map<int, unordered_set<int>>> getAllMaximalRRadiusGraph(int radius);
+
+    void printNodeContent();
+
+    void printKeywordGraphTable();
+
+    void printGraphIndexTable();
 };
 
 

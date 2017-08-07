@@ -65,6 +65,11 @@ void Graph::readEdge(string edgeFilePath){
     string data;
     ifstream myfile(edgeFilePath);
     while (getline(myfile, data)) {
+//        int split1 = data.find(",");
+//        int firstNode = stoi(data.substr(0,split1));
+//        int split2 = data.substr(split1+1,data.length()).find(",") + split1;
+//        int secondNode = stoi(data.substr(split1+1,split2+1));
+//        addEdge(firstNode, secondNode);
         int split = data.find(",");
         int firstNode = stoi(data.substr(0,split));
         int secondNode = stoi(data.substr(split+1,data.length()));
@@ -72,7 +77,7 @@ void Graph::readEdge(string edgeFilePath){
     }
 }
 
-unordered_map<int, unordered_set<int>> Graph::getRRadiusGraph(int nodeID, int radius) {
+unordered_map<int, unordered_set<int>> Graph::getMaximalRRadiusGraph(int nodeID, int radius) {
 
     unordered_map<int, unordered_set<int>> rRadiusGraph;
 
@@ -168,6 +173,25 @@ unordered_map<int, unordered_set<int>> Graph::getRRadiusGraph(int nodeID, int ra
         }
     }
 
+    //update the graphIndexTable
+    int curGraphIndex = graphIndexTable.size();
+    graphIndexTable.insert({curGraphIndex, rRadiusGraph});
+
+    //update the keyword-graph table
+    for (const auto& elem: keys) {
+        string contentOfNode = nodeContent[elem];
+        tokenizer<> tok(contentOfNode);
+        for(tokenizer<>::iterator it=tok.begin(); it!=tok.end();++it) {
+            auto kGT= keywordGraphTable.find(*it);
+            if(kGT == keywordGraphTable.end()) {
+                unordered_set<int> graphIndexSet;
+                graphIndexSet.insert(curGraphIndex);
+                keywordGraphTable.insert({*it,graphIndexSet});
+            } else {
+                kGT->second.insert(curGraphIndex);
+            }
+        }
+    }
 
     return rRadiusGraph;
 }
@@ -237,12 +261,39 @@ void Graph::printMap(unordered_map<int, unordered_set<int>> um) {
 vector<unordered_map<int,unordered_set<int>>> Graph::getAllMaximalRRadiusGraph(int radius) {
     vector<unordered_map<int,unordered_set<int>>> rRadiusGraphs;
     for(int i=0; i < size; ++i) {
-        unordered_map<int,unordered_set<int>> graph = getRRadiusGraph(i,radius);
+        unordered_map<int,unordered_set<int>> graph = getMaximalRRadiusGraph(i, radius);
         if(graph.size()!=0) {
-            //find maximum r-radius graph
-
             rRadiusGraphs.push_back(graph);
         }
     }
     return rRadiusGraphs;
+}
+
+void Graph::printNodeContent() {
+    int i = 0;
+    for(const auto& elem: nodeContent) {
+        cout<<"The "<<i<<"th node content is: "<<elem<<endl;
+        ++i;
+    }
+    cout<<endl;
+}
+
+void Graph::printKeywordGraphTable() {
+    for(const auto& elem: keywordGraphTable) {
+        cout<<elem.first<<": ";
+        for(const auto& elem2: elem.second) {
+            cout<<elem2<<" ";
+        }
+        cout<<endl;
+    }
+    cout<<endl;
+}
+
+void Graph::printGraphIndexTable() {
+    for(const auto& elem: graphIndexTable) {
+        cout<<elem.first<<":\n";
+        printMap(elem.second);
+        cout<<endl;
+    }
+    cout<<endl;
 }

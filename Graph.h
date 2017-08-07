@@ -28,9 +28,13 @@ private:
 
     void addEdge(int src, int dest);
 
+    unordered_map<string, unordered_set<int>> keywordNodeTable;
+
     unordered_map<string, unordered_set<int>> keywordGraphTable;
 
     unordered_map<int, unordered_map<int,unordered_set<int>>> graphIndexTable;
+
+
 
 public:
     Graph();
@@ -55,9 +59,18 @@ public:
 
     void printNodeContent();
 
+    void printKeywordNodeTable();
+
     void printKeywordGraphTable();
 
     void printGraphIndexTable();
+
+    unordered_map<int, unordered_set<int>>
+    getRRadiusSteinerGraph(unordered_map<int, unordered_set<int>> rRadiusMaximalGraph, unordered_set<int> contentNodeSet);
+
+    set<int> getNodeSetP(unordered_map<int, unordered_set<int>> rRadiusMaximalGraph, unordered_set<int> contentNodeSet, int nodeIndex);
+
+    set<int> convertUsToOs(unordered_set<int> &us);
 };
 
 

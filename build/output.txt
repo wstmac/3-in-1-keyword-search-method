@@ -1,6 +1,132 @@
-It uses 11973.8ms to read node
-It uses 28988.6ms to read edge
-It uses 1.01385e+07ms to get maximal r-graph 5000-10000
-There are 2 graph returns
-It uses 0.384ms to print graph
-The program uses 1.01795e+07ms
+It uses 0.177ms to read node
+It uses 0.079ms to read edge
+It uses 0.678ms to print graph
+The program uses 0.975ms
+Node Content Table:
+The 0th node content is: J. Shanmugasundaram
+The 1th node content is: L. Guo
+The 2th node content is: V. Hristidis
+The 3th node content is: Y. Papakonstantinou
+The 4th node content is: A. Balmin
+The 5th node content is: Topology Search over Biological Databases
+The 6th node content is: XRANK: Ranked Keyword Search over XML Documents
+The 7th node content is: Bidirectional Expansion for Keyword Search on Graphs
+The 8th node content is: Finding top-k Answers in Keyword Proximity Search
+The 9th node content is: Efficient IR-Style Keyword Search over Relational Databases
+The 10th node content is: Keyword Proximity Search on XML Graphs
+The 11th node content is: DISCOVER: Keyword Search in Relational Databases
+
+Ketword Node Table
+DISCOVER: 11 
+Style: 9 
+IR: 9 
+in: 11 8 
+Efficient: 9 
+Answers: 8 
+Graphs: 10 7 
+Finding: 8 
+on: 10 7 
+for: 7 
+Balmin: 4 
+k: 8 
+A: 4 
+Guo: 1 
+Hristidis: 2 
+Y: 3 
+L: 1 
+Bidirectional: 7 
+Papakonstantinou: 3 
+Topology: 5 
+over: 9 6 5 
+V: 2 
+Shanmugasundaram: 0 
+J: 0 
+Documents: 6 
+Relational: 11 9 
+Search: 11 10 9 8 7 6 5 
+Biological: 5 
+Expansion: 7 
+Proximity: 10 8 
+Databases: 11 9 5 
+XRANK: 6 
+Ranked: 6 
+top: 8 
+Keyword: 11 10 9 8 7 6 
+XML: 10 6 
+
+Ketword Graph Table
+DISCOVER: 3 
+Balmin: 3 
+Y: 3 2 
+Style: 3 2 1 
+IR: 3 2 1 
+Hristidis: 3 2 1 
+V: 3 2 1 
+in: 3 2 1 0 
+Efficient: 3 2 1 
+Answers: 3 2 1 0 
+XRANK: 2 1 0 
+Biological: 1 0 
+Expansion: 3 2 1 0 
+over: 3 2 1 0 
+Papakonstantinou: 3 2 
+Topology: 1 0 
+Relational: 3 2 1 
+Search: 3 2 1 0 
+Proximity: 3 2 1 0 
+Databases: 3 2 1 0 
+Guo: 0 
+L: 0 
+Bidirectional: 3 2 1 0 
+Shanmugasundaram: 1 0 
+J: 1 0 
+Documents: 2 1 0 
+Ranked: 2 1 0 
+A: 3 
+k: 3 2 1 0 
+XML: 3 2 1 0 
+for: 3 2 1 0 
+Graphs: 3 2 1 0 
+on: 3 2 1 0 
+Finding: 3 2 1 0 
+Keyword: 3 2 1 0 
+top: 3 2 1 0 
+
+Graph Index Table
+3:
+11->3
+2->9->8
+7->8
+8->2->7->9
+3->9->11->10
+4->10
+10->3->4->9
+9->2->3->8->10
+
+2:
+6->7
+7->6->8
+2->8->9
+3->9
+10->9
+9->2->3->8->10
+8->2->7->9
+
+1:
+0->6
+5->6
+6->0->5->7
+2->8
+9->8
+8->2->7->9
+7->6->8
+
+0:
+0->6->5
+1->5
+5->0->1->6
+8->7
+7->6->8
+6->0->5->7
+
+

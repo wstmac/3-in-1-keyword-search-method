@@ -79,25 +79,40 @@ int main() {
 //    }
 //    cout<<"There are "<<i<<" graph returns"<<endl;
 
-    vector<unordered_map<int, unordered_set<int>>> rRadiusMaximalGraph = graph.getAllMaximalRRadiusGraph(2);
+    unordered_map<int, unordered_set<int>> rRadiusMaximalGraph = graph.getMaximalRRadiusGraph(6, 2);
+    graph.printMap(rRadiusMaximalGraph);
 
+    unordered_set<int> contentNode;
+    contentNode.insert(0);
+    contentNode.insert(1);
+    contentNode.insert(6);
 
+    unordered_map<int, unordered_set<int>> steinerGraph = graph.getRRadiusSteinerGraph(rRadiusMaximalGraph, contentNode);
+    cout<<"\nSteiner Graph:\n";
+
+    graph.printMap(steinerGraph);
 
 
     unsigned long long end = getTime();
 
-    cout<<"It uses "<<getInterval(end3,end)<<"ms to print graph"<<endl;
 
     cout<<"The program uses "<<getInterval(start, end)<<"ms"<<endl;
 
-    cout<<"Node Content Table:\n";
-    graph.printNodeContent();
+//    cout<<"Node Content Table:\n";
+//    graph.printNodeContent();
+//
+//    cout<<"Ketword Node Table\n";
+//    graph.printKeywordNodeTable();
+//
+//    cout<<"Ketword Graph Table\n";
+//    graph.printKeywordGraphTable();
+//
+//    cout<<"Graph Index Table\n";
+//    graph.printGraphIndexTable();
+//
+//    graph.printGraph();
 
-    cout<<"Ketword Graph Table\n";
-    graph.printKeywordGraphTable();
 
-    cout<<"Graph Index Table\n";
-    graph.printGraphIndexTable();
 
 
 

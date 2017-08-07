@@ -46,7 +46,22 @@ int Graph::readNode(string nodeFilePath){
     ifstream myfile(nodeFilePath);
 
     while (getline(myfile, data)) {
+        //update the nodeContent table
         nodeContent.push_back(data);
+
+        //update the keywordNodeTable
+        tokenizer<> tok(data);
+        for(tokenizer<>::iterator it=tok.begin(); it!=tok.end();++it) {
+            auto kNT= keywordNodeTable.find(*it);
+            if(kNT == keywordNodeTable.end()) {
+                unordered_set<int> nodeIndexSet;
+                nodeIndexSet.insert(size);
+                keywordNodeTable.insert({*it,nodeIndexSet});
+            } else {
+                kNT->second.insert(size);
+            }
+        }
+
         ++size;
     }
 
@@ -278,6 +293,17 @@ void Graph::printNodeContent() {
     cout<<endl;
 }
 
+void Graph::printKeywordNodeTable() {
+    for(const auto& elem: keywordNodeTable) {
+        cout<<elem.first<<": ";
+        for(const auto& elem2: elem.second) {
+            cout<<elem2<<" ";
+        }
+        cout<<endl;
+    }
+    cout<<endl;
+}
+
 void Graph::printKeywordGraphTable() {
     for(const auto& elem: keywordGraphTable) {
         cout<<elem.first<<": ";
@@ -297,3 +323,126 @@ void Graph::printGraphIndexTable() {
     }
     cout<<endl;
 }
+
+unordered_map<int, unordered_set<int>> Graph::getRRadiusSteinerGraph(unordered_map<int, unordered_set<int>> rRadiusMaximalGraph, unordered_set<int> contentNodeSet) {
+
+    int numOfContentNode = contentNodeSet.size();
+
+    set<int> finalPSet;
+
+    set<int> orderedContentNodeSet = convertUsToOs(contentNodeSet);
+
+    vector<set<int>> pSet(numOfContentNode);
+    int pointer = 0;
+
+    //doing step1 of getting steiner graph
+    for(const auto& elem: contentNodeSet) {
+        auto temp = contentNodeSet;
+        temp.erase(elem);
+        pSet[pointer] = getNodeSetP(rRadiusMaximalGraph, temp, elem);
+        ++pointer;
+    }
+
+    //doing step2 of getting steiner graph
+    for(int i = 0; i < numOfContentNode; ++i) {
+        for(int j = i + 1; j < numOfContentNode; ++j) {
+            set<int> intersect;
+            set_intersection(pSet[i].begin(), pSet[i].end(), pSet[j].begin(), pSet[j].end(), inserter(intersect, intersect.begin()));
+            set<int> un;
+            set_union(intersect.begin(), intersect.end(), finalPSet.begin(), finalPSet.end(), inserter(un, un.begin()));
+            finalPSet = un;
+        }
+    }
+
+    //union with content node
+    set<int> un;
+    set_union(orderedContentNodeSet.begin(), orderedContentNodeSet.end(), finalPSet.begin(), finalPSet.end(), inserter(un, un.begin()));
+    finalPSet = un;
+
+    //get deleted node list
+    set<int> deletedNode;
+    set<int> allNode;
+    for(const auto& elem: rRadiusMaximalGraph) {
+        allNode.insert(elem.first);
+    }
+    set_difference(allNode.begin(), allNode.end(), finalPSet.begin(), finalPSet.end(), inserter(deletedNode, deletedNode.begin()));
+
+    //get final steiner graph
+    for(auto cit = rRadiusMaximalGraph.begin(); cit != rRadiusMaximalGraph.end() ;) {
+
+        int key = cit->first;
+
+        auto it = deletedNode.find(key);
+
+        if(it == deletedNode.end()) {
+            for(const auto& nodeIndex: deletedNode) {
+                cit->second.erase(nodeIndex);
+            }
+            ++cit;
+        } else {
+            rRadiusMaximalGraph.erase(cit++);
+        }
+    }
+
+    return rRadiusMaximalGraph;
+
+
+}
+
+set<int> Graph::getNodeSetP(unordered_map<int, unordered_set<int>> rRadiusMaximalGraph, unordered_set<int> contentNodeSet, int nodeIndex) {
+
+
+    set<int> result;
+
+    //remove content nodes and their corresponding edges
+    for(auto cit = rRadiusMaximalGraph.begin(); cit != rRadiusMaximalGraph.end();) {
+
+        int key = cit->first;
+
+
+        auto it = contentNodeSet.find(key);
+
+
+        if(it == contentNodeSet.end()) {
+            for(const auto& nodeIndex: contentNodeSet) {
+                cit->second.erase(nodeIndex);
+            }
+            ++cit;
+        } else {
+            rRadiusMaximalGraph.erase(cit++);
+        }
+    }
+
+
+    //Run BFS to get the nodes which connect to content node ci
+
+
+    list<int> queue;
+    queue.push_back(nodeIndex);
+
+
+    while(!queue.empty()) {
+        int curNode = queue.front();
+        result.insert(curNode);
+        queue.pop_front();
+
+        for (const auto& elem: rRadiusMaximalGraph.find(curNode)->second) {
+            //if the node is not visited curNode before
+            if(result.find(elem) == result.end()) {
+                queue.push_back(elem);
+            }
+        }
+    }
+
+    return result;
+}
+
+set<int> Graph::convertUsToOs(unordered_set<int>& us) {
+    set<int> os;
+    for(const auto& elem: us) {
+        os.insert(elem);
+    }
+    return os;
+}
+
+

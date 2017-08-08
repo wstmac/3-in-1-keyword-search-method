@@ -79,43 +79,61 @@ int main() {
 //    }
 //    cout<<"There are "<<i<<" graph returns"<<endl;
 
-    unordered_map<int, unordered_set<int>> rRadiusMaximalGraph = graph.getMaximalRRadiusGraph(6, 2);
-    graph.printMap(rRadiusMaximalGraph);
-
-    unordered_set<int> contentNode;
-    contentNode.insert(0);
-    contentNode.insert(1);
-    contentNode.insert(6);
-
-    unordered_map<int, unordered_set<int>> steinerGraph = graph.getRRadiusSteinerGraph(rRadiusMaximalGraph, contentNode);
-    cout<<"\nSteiner Graph:\n";
-
-    graph.printMap(steinerGraph);
-
-
-    unsigned long long end = getTime();
-
-
-    cout<<"The program uses "<<getInterval(start, end)<<"ms"<<endl;
-
-//    cout<<"Node Content Table:\n";
-//    graph.printNodeContent();
+//    unordered_map<int, unordered_set<int>> rRadiusMaximalGraph = graph.getMaximalRRadiusGraph(9, 2);
+//    graph.printMap(rRadiusMaximalGraph);
 //
-//    cout<<"Ketword Node Table\n";
-//    graph.printKeywordNodeTable();
+//    unordered_set<int> contentNode;
+//    contentNode.insert(0);
+//    contentNode.insert(1);
+//    contentNode.insert(6);
 //
-//    cout<<"Ketword Graph Table\n";
-//    graph.printKeywordGraphTable();
+//    unordered_map<int, unordered_set<int>> steinerGraph = graph.getRRadiusSteinerGraph(rRadiusMaximalGraph, contentNode);
+//    cout<<"\nSteiner Graph:\n";
 //
-//    cout<<"Graph Index Table\n";
-//    graph.printGraphIndexTable();
+//    graph.printMap(steinerGraph);
 //
-//    graph.printGraph();
+//
+//    unsigned long long end = getTime();
+//
+//
+//    cout<<"The program uses "<<getInterval(start, end)<<"ms"<<endl;
 
 
+    graph.getAllMaximalRRadiusGraph(2);
+
+    cout<<"Node Content Table:\n";
+    graph.printNodeContent();
+
+    cout<<"Ketword Node Table\n";
+    graph.printKeywordNodeTable();
+
+    cout<<"Ketword Graph Table\n";
+    graph.printKeywordGraphTable();
+
+    cout<<"Graph Index Table\n";
+    graph.printGraphIndexTable();
+
+    graph.printGraph();
+
+    //test searchRRadiusMaximalGraph function
+//    unordered_set<string> keywords = graph.extractKeywords("DISCOVER, Relational, Databases, Papakonstantinou");
+//    set<int> answer = graph.searchRRadiusMaximalGraph(keywords);
+//
+//    cout<<"\nGraph get by keywords\n";
+//    for(const auto& elem: answer) {
+//        auto g = graph.getGraphByGraphIndex(elem);
+//        graph.printMap(g);
+//        cout<<endl;
+//    }
 
 
-
+    //test searchRRadiusSteinerGraph function
+    vector<unordered_map<int, unordered_set<int>>> answer = graph.searchRRadiusSteinerGraph("Shanmugasundaram, Guo, XRANK");
+    cout<<"\nSteiner Graph get by keywords\n";
+    for(const auto& elem: answer) {
+        graph.printMap(elem);
+        cout<<endl;
+    }
 
     return 0;
 }

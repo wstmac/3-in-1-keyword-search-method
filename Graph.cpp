@@ -20,6 +20,22 @@ Graph::~Graph(){
 
 }
 
+string Graph::getNodeContentByNodeIndex(int nodeIndex) {
+    return nodeContent[nodeIndex];
+}
+
+set<int> Graph::getNodeSetBykeyword(string keyword) {
+    return keywordNodeTable.find(keyword)->second;
+}
+
+set<int> Graph::getGraphIndexBykeyword(string keyword) {
+    return keywordGraphTable.find(keyword)->second;
+}
+
+unordered_map<int, unordered_set<int>> Graph::getGraphByGraphIndex(int graphIndex) {
+    return graphIndexTable.find(graphIndex)->second;
+}
+
 
 void Graph::addEdge(int src, int dest) {
 
@@ -54,7 +70,7 @@ int Graph::readNode(string nodeFilePath){
         for(tokenizer<>::iterator it=tok.begin(); it!=tok.end();++it) {
             auto kNT= keywordNodeTable.find(*it);
             if(kNT == keywordNodeTable.end()) {
-                unordered_set<int> nodeIndexSet;
+                set<int> nodeIndexSet;
                 nodeIndexSet.insert(size);
                 keywordNodeTable.insert({*it,nodeIndexSet});
             } else {
@@ -199,7 +215,7 @@ unordered_map<int, unordered_set<int>> Graph::getMaximalRRadiusGraph(int nodeID,
         for(tokenizer<>::iterator it=tok.begin(); it!=tok.end();++it) {
             auto kGT= keywordGraphTable.find(*it);
             if(kGT == keywordGraphTable.end()) {
-                unordered_set<int> graphIndexSet;
+                set<int> graphIndexSet;
                 graphIndexSet.insert(curGraphIndex);
                 keywordGraphTable.insert({*it,graphIndexSet});
             } else {
@@ -324,7 +340,8 @@ void Graph::printGraphIndexTable() {
     cout<<endl;
 }
 
-unordered_map<int, unordered_set<int>> Graph::getRRadiusSteinerGraph(unordered_map<int, unordered_set<int>> rRadiusMaximalGraph, unordered_set<int> contentNodeSet) {
+unordered_map<int, unordered_set<int>>
+Graph::getRRadiusSteinerGraph(unordered_map<int, unordered_set<int>> rRadiusMaximalGraph, unordered_set<int> contentNodeSet) {
 
     int numOfContentNode = contentNodeSet.size();
 
@@ -386,7 +403,12 @@ unordered_map<int, unordered_set<int>> Graph::getRRadiusSteinerGraph(unordered_m
 
     return rRadiusMaximalGraph;
 
+}
 
+unordered_map<int, unordered_set<int>>
+Graph::getRRadiusSteinerGraph(int rRadiusMaximalGraphIndex, unordered_set<int> contentNodeSet) {
+    unordered_map<int, unordered_set<int>> rRadiusMaximalGraph = graphIndexTable.find(rRadiusMaximalGraphIndex)->second;
+    return getRRadiusSteinerGraph(rRadiusMaximalGraph, contentNodeSet);
 }
 
 set<int> Graph::getNodeSetP(unordered_map<int, unordered_set<int>> rRadiusMaximalGraph, unordered_set<int> contentNodeSet, int nodeIndex) {
@@ -444,5 +466,84 @@ set<int> Graph::convertUsToOs(unordered_set<int>& us) {
     }
     return os;
 }
+
+
+
+unordered_set<string> Graph::extractKeywords(string input) {
+    unordered_set<string> keywords;
+    tokenizer<> tok(input);
+    for(tokenizer<>::iterator it=tok.begin(); it!=tok.end();++it) {
+        keywords.insert(*it);
+    }
+    return keywords;
+}
+
+set<int> Graph::searchRRadiusMaximalGraph(unordered_set<string> keywordSet) {
+    set<int> rRadiusMaximalGraphSet;
+    int keywordSetSize = keywordSet.size();
+    vector<set<int>> graphIndexSets(keywordSetSize);
+    int pointer = 0;
+
+    for(const auto& elem: keywordSet) {
+        if(keywordGraphTable.find(elem) != keywordGraphTable.end()) {
+            graphIndexSets[pointer] = keywordGraphTable.find(elem)->second;
+            ++pointer;
+        }
+    }
+
+    rRadiusMaximalGraphSet = graphIndexSets[0];
+
+    for(int i=1; i<keywordSetSize; ++i) {
+        set<int> intersect;
+        set_intersection(rRadiusMaximalGraphSet.begin(), rRadiusMaximalGraphSet.end(), graphIndexSets[i].begin(), graphIndexSets[i].end(), inserter(intersect, intersect.begin()));
+        rRadiusMaximalGraphSet = intersect;
+    }
+
+    return rRadiusMaximalGraphSet;
+
+}
+
+vector<unordered_map<int, unordered_set<int>>> Graph::searchRRadiusSteinerGraph(string input) {
+
+    vector<unordered_map<int, unordered_set<int>>> steinerGraphSet;
+
+    unordered_set<string> keywordSet = extractKeywords(input);
+    set<int> rRadiusMaximalGraphIndexSet = searchRRadiusMaximalGraph(keywordSet);
+
+    for(const auto& elem: rRadiusMaximalGraphIndexSet) {
+        unordered_set<int> contentNodeSet = findContentNodeInGraph(elem, keywordSet);
+        unordered_map<int, unordered_set<int>> steinerGraph = getRRadiusSteinerGraph(elem, contentNodeSet);
+        steinerGraphSet.push_back(steinerGraph);
+    }
+
+    return steinerGraphSet;
+}
+
+unordered_set<int> Graph::findContentNodeInGraph(int graphIndex, unordered_set<string> keywordSet) {
+
+    unordered_set<int> contentNodeSet;
+
+    unordered_map<int, unordered_set<int>> graph = getGraphByGraphIndex(graphIndex);
+
+    for(const auto& elem: graph) {
+        int curNodeIndex = elem.first;
+        string curNodeContent = nodeContent[curNodeIndex];
+        if(contains(curNodeContent, keywordSet)) {
+            contentNodeSet.insert(curNodeIndex);
+        }
+    }
+
+    return contentNodeSet;
+}
+
+bool Graph::contains(string data, unordered_set<string> keywordSet) {
+    for(const auto& elem: keywordSet) {
+        if(data.find(elem) != string::npos) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 

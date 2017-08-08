@@ -27,7 +27,8 @@ private:
 
     unordered_set<int>* adjList;
 
-    vector<string> nodeContent;
+    //first element in pair is node content, second is its term number
+    vector<pair<string, int>> nodeContent;
 
     void addEdge(int src, int dest);
 

@@ -21,7 +21,7 @@ Graph::~Graph(){
 }
 
 string Graph::getNodeContentByNodeIndex(int nodeIndex) {
-    return nodeContent[nodeIndex];
+    return nodeContent[nodeIndex].first;
 }
 
 set<int> Graph::getNodeSetBykeyword(string keyword) {
@@ -57,17 +57,21 @@ void Graph::printGraph() {
 }
 
 int Graph::readNode(string nodeFilePath){
+
     int size = 0;
+    int totalTerm = 0;
+
     string data;
     ifstream myfile(nodeFilePath);
 
     while (getline(myfile, data)) {
-        //update the nodeContent table
-        nodeContent.push_back(data);
+
+        int noTermInNode = 0;
 
         //update the keywordNodeTable
         tokenizer<> tok(data);
         for(tokenizer<>::iterator it=tok.begin(); it!=tok.end();++it) {
+            ++noTermInNode;
             auto kNT= keywordNodeTable.find(*it);
             if(kNT == keywordNodeTable.end()) {
                 set<int> nodeIndexSet;
@@ -77,6 +81,9 @@ int Graph::readNode(string nodeFilePath){
                 kNT->second.insert(size);
             }
         }
+
+        pair<string, int> curNode = make_pair(data, noTermInNode);
+        nodeContent.push_back(curNode);
 
         ++size;
     }
@@ -210,7 +217,7 @@ unordered_map<int, unordered_set<int>> Graph::getMaximalRRadiusGraph(int nodeID,
 
     //update the keyword-graph table
     for (const auto& elem: keys) {
-        string contentOfNode = nodeContent[elem];
+        string contentOfNode = nodeContent[elem].first;
         tokenizer<> tok(contentOfNode);
         for(tokenizer<>::iterator it=tok.begin(); it!=tok.end();++it) {
             auto kGT= keywordGraphTable.find(*it);
@@ -303,7 +310,7 @@ vector<unordered_map<int,unordered_set<int>>> Graph::getAllMaximalRRadiusGraph(i
 void Graph::printNodeContent() {
     int i = 0;
     for(const auto& elem: nodeContent) {
-        cout<<"The "<<i<<"th node content is: "<<elem<<endl;
+        cout<<"The "<<i<<"th node content is: "<<elem.first<<" ; there are "<<elem.second<<" term in the node"<<endl;
         ++i;
     }
     cout<<endl;
@@ -527,7 +534,7 @@ unordered_set<int> Graph::findContentNodeInGraph(int graphIndex, unordered_set<s
 
     for(const auto& elem: graph) {
         int curNodeIndex = elem.first;
-        string curNodeContent = nodeContent[curNodeIndex];
+        string curNodeContent = nodeContent[curNodeIndex].first;
         if(contains(curNodeContent, keywordSet)) {
             contentNodeSet.insert(curNodeIndex);
         }

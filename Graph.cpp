@@ -59,7 +59,6 @@ void Graph::printGraph() {
 int Graph::readNode(string nodeFilePath){
 
     int size = 0;
-    int totalTerm = 0;
 
     string data;
     ifstream myfile(nodeFilePath);
@@ -215,8 +214,10 @@ unordered_map<int, unordered_set<int>> Graph::getMaximalRRadiusGraph(int nodeID,
     int curGraphIndex = graphIndexTable.size();
     graphIndexTable.insert({curGraphIndex, rRadiusGraph});
 
-    //update the keyword-graph table
+    int totalTermInGraph = 0;
+
     for (const auto& elem: keys) {
+        //update the keyword-graph table
         string contentOfNode = nodeContent[elem].first;
         tokenizer<> tok(contentOfNode);
         for(tokenizer<>::iterator it=tok.begin(); it!=tok.end();++it) {
@@ -229,7 +230,11 @@ unordered_map<int, unordered_set<int>> Graph::getMaximalRRadiusGraph(int nodeID,
                 kGT->second.insert(curGraphIndex);
             }
         }
+
+        //update graphIndexTermNumberTable
+        totalTermInGraph += nodeContent[elem].second;
     }
+    graphIndexTermNumberTable.insert({curGraphIndex, totalTermInGraph});
 
     return rRadiusGraph;
 }
@@ -308,15 +313,21 @@ vector<unordered_map<int,unordered_set<int>>> Graph::getAllMaximalRRadiusGraph(i
 }
 
 void Graph::printNodeContent() {
+
+    cout<<"Node Content Table:"<<endl;
+
     int i = 0;
     for(const auto& elem: nodeContent) {
-        cout<<"The "<<i<<"th node content is: "<<elem.first<<" ; there are "<<elem.second<<" term in the node"<<endl;
+        cout<<"The "<<i<<"th node content is: "<<elem.first<<" ;\nThere are "<<elem.second<<" term in the node"<<endl;
         ++i;
     }
     cout<<endl;
 }
 
 void Graph::printKeywordNodeTable() {
+
+    cout<<"Keyword Node Table:"<<endl;
+
     for(const auto& elem: keywordNodeTable) {
         cout<<elem.first<<": ";
         for(const auto& elem2: elem.second) {
@@ -328,6 +339,9 @@ void Graph::printKeywordNodeTable() {
 }
 
 void Graph::printKeywordGraphTable() {
+
+    cout<<"Keyword Graph Table:"<<endl;
+
     for(const auto& elem: keywordGraphTable) {
         cout<<elem.first<<": ";
         for(const auto& elem2: elem.second) {
@@ -339,10 +353,23 @@ void Graph::printKeywordGraphTable() {
 }
 
 void Graph::printGraphIndexTable() {
+
+    cout<<"Graph Index Term Table:"<<endl;
+
     for(const auto& elem: graphIndexTable) {
         cout<<elem.first<<":\n";
         printMap(elem.second);
         cout<<endl;
+    }
+    cout<<endl;
+}
+
+void Graph::printGraphIndexTermNumberTable() {
+
+    cout<<"Graph Index Term Number Table:"<<endl;
+
+    for(const auto& elem: graphIndexTermNumberTable) {
+        cout<<elem.first<<"   :"<<elem.second<<endl;
     }
     cout<<endl;
 }
@@ -551,6 +578,8 @@ bool Graph::contains(string data, unordered_set<string> keywordSet) {
     }
     return false;
 }
+
+
 
 
 

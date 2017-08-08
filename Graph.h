@@ -78,6 +78,8 @@ public:
 
     void printGraphIndexTable();
 
+    void printGraphIndexTermNumberTable();
+
     unordered_map<int, unordered_set<int>> getRRadiusSteinerGraph(unordered_map<int, unordered_set<int>> rRadiusMaximalGraph, unordered_set<int> contentNodeSet);
 
     unordered_map<int, unordered_set<int>> getRRadiusSteinerGraph(int rRadiusMaximalGraphIndex, unordered_set<int> contentNodeSet);

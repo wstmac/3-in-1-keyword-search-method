@@ -113,6 +113,8 @@ int main() {
     cout<<"Graph Index Table\n";
     graph.printGraphIndexTable();
 
+    graph.printGraphIndexTermNumberTable();
+
     graph.printGraph();
 
     //test searchRRadiusMaximalGraph function

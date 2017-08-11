@@ -99,7 +99,11 @@ int main() {
 //    cout<<"The program uses "<<getInterval(start, end)<<"ms"<<endl;
 
 
-//    graph.getAllMaximalRRadiusGraph(2);
+//    vector<unordered_map<int, unordered_set<int>>> result = graph.getAllMaximalRRadiusGraph(2);
+//    for(const auto& elem: result) {
+//        graph.printMap(elem);
+//        cout<<endl;
+//    }
 //
 //    graph.printNodeContent();
 //
@@ -134,19 +138,57 @@ int main() {
 //    }
 
     //test computeScoreOfIR function
+//    graph.getAllMaximalRRadiusGraph(2);
+//    unordered_set<string> keywordSet = graph.extractKeywords("DISCOVER, Relational, Databases, Papakonstantinou");
+//    set<int> answer = graph.searchRRadiusMaximalGraph(keywordSet);
+//
+//    cout<<"\nGraph get by keywords\n";
+//    for(const auto& elem: answer) {
+//        auto g = graph.getGraphByGraphIndex(elem);
+//        graph.printMap(g);
+//
+//        cout<<"Score Of IR by graph index "<<elem<<" is "<< graph.computeScoreOfIR(keywordSet, g);
+//        cout<<endl;
+//    }
+
+
+    //test computeScoreOfDB function
+//    vector<unordered_map<int, unordered_set<int>>> result = graph.getAllMaximalRRadiusGraph(2);
+//    graph.printMap(result[3]);
+//    cout<<endl;
+//    unordered_set<string> keywordSet = graph.extractKeywords("DISCOVER, Relational, Databases, Papakonstantinou");
+//    cout<<"\n"<<graph.computeScoreOfDB(keywordSet, result[3]);
+
+
+    //test computeFinalScore
+//    vector<unordered_map<int, unordered_set<int>>> result = graph.getAllMaximalRRadiusGraph(2);
+//    graph.printMap(result[3]);
+//    cout<<endl;
+//    unordered_set<string> keywordSet = graph.extractKeywords("DISCOVER, Relational, Databases, Papakonstantinou");
+//    cout<<"\n"<<graph.computeFinalScore(keywordSet, result[3]);
+
+    //debug
     graph.getAllMaximalRRadiusGraph(2);
-    unordered_set<string> keywordSet = graph.extractKeywords("DISCOVER, Relational, Databases, Papakonstantinou");
-    set<int> answer = graph.searchRRadiusMaximalGraph(keywordSet);
 
-    cout<<"\nGraph get by keywords\n";
-    for(const auto& elem: answer) {
-        auto g = graph.getGraphByGraphIndex(elem);
-        graph.printMap(g);
-
-        cout<<"Score Of IR by graph index "<<elem<<" is "<< graph.computeScoreOfIR(keywordSet, g);
+    unordered_set<string> keywordSet = graph.extractKeywords("Relational, Databases");
+    set<int> rRadiusMaximalGraphIndexSet = graph.searchRRadiusMaximalGraph(keywordSet);
+    for(const auto& elem : rRadiusMaximalGraphIndexSet) {
+        graph.printMap(graph.getGraphByGraphIndex(elem));
         cout<<endl;
     }
 
+    cout<<"steiner graph"<<endl;
+    auto result = graph.searchRRadiusSteinerGraph("Relational, Databases");
+    for(const auto& elem : result) {
+        graph.printMap(elem);
+        cout<<endl;
+    }
+    cout<<endl;
+    float scoreOfIR1 = graph.computeScoreOfIR("Relational",result[0]);
+    float scoreOfIR2 = graph.computeScoreOfIR("Databases",result[0]);
+    float scoreOfDB = graph.computeSIM("Relational","Databases",result[0]);
+
+    cout<<"\n"<<scoreOfDB * (scoreOfIR1 + scoreOfIR2);
 
     return 0;
 }

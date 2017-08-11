@@ -7,6 +7,7 @@
 
 
 
+
 #include "Graph.h"
 
 using namespace std;
@@ -124,8 +125,8 @@ unordered_map<int, unordered_set<int>> Graph::getMaximalRRadiusGraph(int nodeID,
 
     vector<int> visited(size);
 
-    list<int> queue;
-    queue.push_back(nodeID);
+    queue<int> queue;
+    queue.push(nodeID);
 
     //BFS depth
     int r = 0;
@@ -136,14 +137,14 @@ unordered_map<int, unordered_set<int>> Graph::getMaximalRRadiusGraph(int nodeID,
 
     while(!queue.empty() && r < radius) {
         int curNode = queue.front();
-        queue.pop_front();
+        queue.pop();
         visited[curNode] = 1;
 
 
         for (const auto& elem: adjList[curNode]) {
             if(visited[elem] == 0) {
                 visited[elem] = 1;
-                queue.push_back(elem);
+                queue.push(elem);
                 counter2++;
             }
 
@@ -249,8 +250,8 @@ set<int> Graph::getRRadiusNodes(int nodeID, int radius) {
 
     vector<int> visited(size);
 
-    list<int> queue;
-    queue.push_back(nodeID);
+    queue<int> queue;
+    queue.push(nodeID);
 
     //BFS depth
     int r = 0;
@@ -260,14 +261,14 @@ set<int> Graph::getRRadiusNodes(int nodeID, int radius) {
 
     while(!queue.empty() && r < radius) {
         int curNode = queue.front();
-        queue.pop_front();
+        queue.pop();
         visited[curNode] = 1;
 
 
         for (const auto& elem: adjList[curNode]) {
             if(visited[elem] == 0) {
                 visited[elem] = 1;
-                queue.push_back(elem);
+                queue.push(elem);
                 counter2++;
             }
 
@@ -477,19 +478,19 @@ set<int> Graph::getNodeSetP(unordered_map<int, unordered_set<int>> rRadiusMaxima
     //Run BFS to get the nodes which connect to content node ci
 
 
-    list<int> queue;
-    queue.push_back(nodeIndex);
+    queue<int> queue;
+    queue.push(nodeIndex);
 
 
     while(!queue.empty()) {
         int curNode = queue.front();
         result.insert(curNode);
-        queue.pop_front();
+        queue.pop();
 
         for (const auto& elem: rRadiusMaximalGraph.find(curNode)->second) {
             //if the node is not visited curNode before
             if(result.find(elem) == result.end()) {
-                queue.push_back(elem);
+                queue.push(elem);
             }
         }
     }
@@ -679,6 +680,146 @@ float Graph::computeScoreOfIR(unordered_set<string> keywordSet, unordered_map<in
 
     return scoreOfIR;
 }
+
+float Graph::computeSIM(int source, int target, int graphIndex) {
+    unordered_map<int, unordered_set<int>> sg = getGraphByGraphIndex(graphIndex);
+    return computeSIM(source, target, sg);
+}
+
+float Graph::computeSIM(int source, int target, unordered_map<int, unordered_set<int>> sg) {
+
+    float sim = 0;
+
+    vector<int> pathLengh = findAllPathLengthBetweenTwoNode(source, target, sg);
+    for(const auto&elem: pathLengh) {
+        sim += 1 / pow(elem , 2);
+    }
+
+    return sim;
+}
+
+vector<int>
+Graph::findAllPathLengthBetweenTwoNode(int source, int target, unordered_map<int, unordered_set<int>> sg) {
+
+    vector<int> pathLength;//store all the possible path length
+
+    vector<int> path;
+    path.push_back(source);
+
+    queue<vector<int>> q;
+    q.push(path);
+
+
+    while(!q.empty()) {
+        path=q.front();
+        q.pop();
+
+        int lastNodeOfPath=path[path.size()-1];
+        if(lastNodeOfPath == target) {
+            //cout<<"The Required path is:: ";
+            //printPath(path);
+
+            pathLength.push_back(path.size());
+
+        } else {
+            //printPath(path);
+        }
+
+        for(const auto& elem: sg.find(lastNodeOfPath)->second) {
+            if(isNodeNotInThePath(elem, path)) {
+                vector<int> new_path(path.begin(),path.end());
+                new_path.push_back(elem);
+                q.push(new_path);
+            }
+        }
+    }
+    return pathLength;
+}
+
+void Graph::printPath(vector<int> path) {
+    cout<<"[ ";
+    for(int i=0;i<path.size();++i)
+    {
+        cout<<path[i]<<" ";
+    }
+    cout<<"]"<<endl;
+}
+
+bool Graph::isNodeNotInThePath(int node, vector<int> path) {
+    for(int i = 0; i < path.size(); ++i) {
+        if(path[i] == node) {
+            return false;
+        }
+    }
+    return true;
+}
+
+float Graph::computeSIM(string source, string target, unordered_map<int, unordered_set<int>> sg) {
+
+    float score = 0;
+
+    //find node that contains these two keyword
+    vector<int> sourceSet, targetSet;
+
+    for(const auto& elem: sg) {
+        int nodeIndex = elem.first;
+        string nodeContent = getNodeContentByNodeIndex(nodeIndex);
+        tokenizer<> tok(nodeContent);
+        for(tokenizer<>::iterator it=tok.begin(); it!=tok.end();++it) {
+            if(*it == source) {
+                sourceSet.push_back(nodeIndex);
+            }
+            if(*it == target) {
+                targetSet.push_back(nodeIndex);
+            }
+        }
+    }
+
+    //for each pair of node, compute the similarity
+    for(int i = 0; i < sourceSet.size(); ++i) {
+        for(int j = 0; j < targetSet.size(); ++j) {
+            score += computeSIM(sourceSet[i], targetSet[j], sg);
+        }
+    }
+
+    return score / (sourceSet.size() + targetSet.size());
+}
+
+float Graph::computeScoreOfDB(unordered_set<string> keywordSet, int graphIndex) {
+    unordered_map<int, unordered_set<int>> sg = getGraphByGraphIndex(graphIndex);
+    return computeScoreOfDB(keywordSet, sg);
+}
+
+float Graph::computeScoreOfDB(unordered_set<string> keywordSet, unordered_map<int, unordered_set<int>> sg) {
+    float scoreOfDB = 0;
+
+    for(unordered_set<string>::iterator i = keywordSet.begin(); i != keywordSet.end(); ++i) {
+        for(unordered_set<string>::iterator j = next(i,1); j != keywordSet.end(); ++j) {
+            //cout<<"keywords are :"<<*i<<" and "<<*j<<endl;
+            scoreOfDB += computeSIM(*i, *j, sg);
+        }
+    }
+
+    return scoreOfDB;
+
+}
+
+float Graph::computeFinalScore(unordered_set<string> keywordSet, unordered_map<int, unordered_set<int>> sg) {
+    float score = 0;
+
+    for(unordered_set<string>::iterator i = keywordSet.begin(); i != keywordSet.end(); ++i) {
+        for(unordered_set<string>::iterator j = next(i,1); j != keywordSet.end(); ++j) {
+            float scoreOfIR1 = computeScoreOfIR(*i, sg);
+            float scoreOfIR2 = computeScoreOfIR(*j, sg);
+            float scoreOfDB = computeSIM(*i, *j, sg);
+            score += scoreOfDB * (scoreOfIR1 + scoreOfIR2);
+        }
+    }
+    return score;
+
+}
+
+
 
 
 

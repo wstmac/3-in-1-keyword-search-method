@@ -9,7 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <list>
+#include <queue>
 #include <set>
 #include <algorithm>
 #include<boost/tokenizer.hpp>
@@ -118,7 +118,30 @@ public:
     float computeScoreOfIR(unordered_set<string> keywordSet, int graphIndex);
 
     float computeScoreOfIR(unordered_set<string> keywordSet, unordered_map<int, unordered_set<int>> graph);
+
+    //Structural Comopactness-based DB Ranking
+    float computeSIM(int source, int target, int graphIndex);
+
+    float computeSIM(int source, int target, unordered_map<int, unordered_set<int>> sg);
+
+    vector<int> findAllPathLengthBetweenTwoNode(int source, int target,
+
+                                                      unordered_map<int, unordered_set<int>> sg);
+
+    void printPath(vector<int> path);
+
+    bool isNodeNotInThePath(int node, vector<int> path);
+
+    float computeSIM(string source, string target, unordered_map<int, unordered_set<int>> sg);
+
+    float computeScoreOfDB(unordered_set<string> keywordSet, int graphIndex);
+
+    float computeScoreOfDB(unordered_set<string> keywordSet, unordered_map<int, unordered_set<int>> graph);
+
+    float computeFinalScore(unordered_set<string> keywordSet, unordered_map<int, unordered_set<int>> sg);
+
 };
+
 
 
 

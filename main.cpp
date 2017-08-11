@@ -160,12 +160,16 @@ int main() {
 //    cout<<"\n"<<graph.computeScoreOfDB(keywordSet, result[3]);
 
 
+
+
     //test computeFinalScore
 //    vector<unordered_map<int, unordered_set<int>>> result = graph.getAllMaximalRRadiusGraph(2);
 //    graph.printMap(result[3]);
 //    cout<<endl;
 //    unordered_set<string> keywordSet = graph.extractKeywords("DISCOVER, Relational, Databases, Papakonstantinou");
 //    cout<<"\n"<<graph.computeFinalScore(keywordSet, result[3]);
+
+
 
     //debug
     graph.getAllMaximalRRadiusGraph(2);
@@ -184,11 +188,13 @@ int main() {
         cout<<endl;
     }
     cout<<endl;
-    float scoreOfIR1 = graph.computeScoreOfIR("Relational",result[0]);
-    float scoreOfIR2 = graph.computeScoreOfIR("Databases",result[0]);
+    float scoreOfIR1 = graph.computeScoreOfIR("Relational",graph.getGraphByGraphIndex(1));
+    float scoreOfIR2 = graph.computeScoreOfIR("Databases",graph.getGraphByGraphIndex(1));
     float scoreOfDB = graph.computeSIM("Relational","Databases",result[0]);
 
-    cout<<"\n"<<scoreOfDB * (scoreOfIR1 + scoreOfIR2);
+    cout<<"\n"<<scoreOfDB * (scoreOfIR1 + scoreOfIR2)<<endl;
+
+    graph.printMap(graph.getGraphByGraphIndex(1));
 
     return 0;
 }

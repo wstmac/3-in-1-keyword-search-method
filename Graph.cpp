@@ -760,6 +760,7 @@ float Graph::computeSIM(string source, string target, unordered_map<int, unorder
 
     //find node that contains these two keyword
     vector<int> sourceSet, targetSet;
+    unordered_set<int> unionOfTwoSet;
 
     for(const auto& elem: sg) {
         int nodeIndex = elem.first;
@@ -768,9 +769,11 @@ float Graph::computeSIM(string source, string target, unordered_map<int, unorder
         for(tokenizer<>::iterator it=tok.begin(); it!=tok.end();++it) {
             if(*it == source) {
                 sourceSet.push_back(nodeIndex);
+                unionOfTwoSet.insert(nodeIndex);
             }
             if(*it == target) {
                 targetSet.push_back(nodeIndex);
+                unionOfTwoSet.insert(nodeIndex);
             }
         }
     }
@@ -782,7 +785,8 @@ float Graph::computeSIM(string source, string target, unordered_map<int, unorder
         }
     }
 
-    return score / (sourceSet.size() + targetSet.size());
+    //compute the union of two vector
+    return score / (unionOfTwoSet.size());
 }
 
 float Graph::computeScoreOfDB(unordered_set<string> keywordSet, int graphIndex) {

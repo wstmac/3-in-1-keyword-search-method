@@ -23,7 +23,7 @@ private:
 
     int size;//how many nodes in the complete graph
 
-    int totalTerm;//total terms in all maximal r-radius graph
+    int totalTerm = 0;
 
     unordered_set<int>* adjList;
 
@@ -48,9 +48,11 @@ public:
 
     string getNodeContentByNodeIndex(int nodeIndex);
 
-    set<int> getNodeSetBykeyword(string keyword);
+    int getNodeTermNumberByNodeIndex(int nodeIndex);
 
-    set<int> getGraphIndexBykeyword(string keyword);
+    set<int> getNodeSetByKeyword(string keyword);
+
+    set<int> getGraphIndexByKeyword(string keyword);
 
     unordered_map<int,unordered_set<int>> getGraphByGraphIndex(int graphIndex);
 
@@ -97,7 +99,27 @@ public:
     unordered_set<int> findContentNodeInGraph(int graphIndex, unordered_set<string> keywordSet);
 
     bool contains(string data, unordered_set<string> keywordSet);
+
+    //TF*IDF-based IR Ranking computation
+    float computeNTF(string keyword, int graphIndex);
+
+    float computeNTF(string keyword, unordered_map<int, unordered_set<int>> graph);
+
+    float computeIDF(string keyword);
+
+    float computeNDL(int graphIndex);
+
+    float computeNDL(unordered_map<int, unordered_set<int>> graph);
+
+    float computeScoreOfIR(string keyword, int graphIndex);
+
+    float computeScoreOfIR(string keyword, unordered_map<int, unordered_set<int>> graph);
+
+    float computeScoreOfIR(unordered_set<string> keywordSet, int graphIndex);
+
+    float computeScoreOfIR(unordered_set<string> keywordSet, unordered_map<int, unordered_set<int>> graph);
 };
+
 
 
 

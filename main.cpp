@@ -99,23 +99,19 @@ int main() {
 //    cout<<"The program uses "<<getInterval(start, end)<<"ms"<<endl;
 
 
-    graph.getAllMaximalRRadiusGraph(2);
-
-    cout<<"Node Content Table:\n";
-    graph.printNodeContent();
-
-    cout<<"Ketword Node Table\n";
-    graph.printKeywordNodeTable();
-
-    cout<<"Ketword Graph Table\n";
-    graph.printKeywordGraphTable();
-
-    cout<<"Graph Index Table\n";
-    graph.printGraphIndexTable();
-
-    graph.printGraphIndexTermNumberTable();
-
-    graph.printGraph();
+//    graph.getAllMaximalRRadiusGraph(2);
+//
+//    graph.printNodeContent();
+//
+//    graph.printKeywordNodeTable();
+//
+//    graph.printKeywordGraphTable();
+//
+//    graph.printGraphIndexTable();
+//
+//    graph.printGraphIndexTermNumberTable();
+//
+//    graph.printGraph();
 
     //test searchRRadiusMaximalGraph function
 //    unordered_set<string> keywords = graph.extractKeywords("DISCOVER, Relational, Databases, Papakonstantinou");
@@ -130,12 +126,28 @@ int main() {
 
 
     //test searchRRadiusSteinerGraph function
-    vector<unordered_map<int, unordered_set<int>>> answer = graph.searchRRadiusSteinerGraph("Shanmugasundaram, Guo, XRANK");
-    cout<<"\nSteiner Graph get by keywords\n";
+//    vector<unordered_map<int, unordered_set<int>>> answer = graph.searchRRadiusSteinerGraph("Shanmugasundaram, Guo, XRANK");
+//    cout<<"\nSteiner Graph get by keywords\n";
+//    for(const auto& elem: answer) {
+//        graph.printMap(elem);
+//        cout<<endl;
+//    }
+
+    //test computeScoreOfIR function
+    graph.getAllMaximalRRadiusGraph(2);
+    unordered_set<string> keywordSet = graph.extractKeywords("DISCOVER, Relational, Databases, Papakonstantinou");
+    set<int> answer = graph.searchRRadiusMaximalGraph(keywordSet);
+
+    cout<<"\nGraph get by keywords\n";
     for(const auto& elem: answer) {
-        graph.printMap(elem);
+        auto g = graph.getGraphByGraphIndex(elem);
+        graph.printMap(g);
+
+        cout<<"Score Of IR by graph index "<<elem<<" is "<< graph.computeScoreOfIR(keywordSet, g);
         cout<<endl;
     }
 
+
     return 0;
 }
+

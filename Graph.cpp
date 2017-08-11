@@ -24,11 +24,15 @@ string Graph::getNodeContentByNodeIndex(int nodeIndex) {
     return nodeContent[nodeIndex].first;
 }
 
-set<int> Graph::getNodeSetBykeyword(string keyword) {
+int Graph::getNodeTermNumberByNodeIndex(int nodeIndex) {
+    return nodeContent[nodeIndex].second;
+}
+
+set<int> Graph::getNodeSetByKeyword(string keyword) {
     return keywordNodeTable.find(keyword)->second;
 }
 
-set<int> Graph::getGraphIndexBykeyword(string keyword) {
+set<int> Graph::getGraphIndexByKeyword(string keyword) {
     return keywordGraphTable.find(keyword)->second;
 }
 
@@ -354,7 +358,7 @@ void Graph::printKeywordGraphTable() {
 
 void Graph::printGraphIndexTable() {
 
-    cout<<"Graph Index Term Table:"<<endl;
+    cout<<"Graph Index Table:"<<endl;
 
     for(const auto& elem: graphIndexTable) {
         cout<<elem.first<<":\n";
@@ -578,6 +582,111 @@ bool Graph::contains(string data, unordered_set<string> keywordSet) {
     }
     return false;
 }
+
+float Graph::computeNTF(string keyword, int graphIndex) {
+
+    unordered_map<int, unordered_set<int>> graph = getGraphByGraphIndex(graphIndex);
+    return computeNTF(keyword, graph);
+
+}
+
+float Graph::computeNTF(string keyword, unordered_map<int, unordered_set<int>> graph) {
+
+    int termFrequency = 0;
+    for(const auto& elem: graph) {
+        int nodeIndex = elem.first;
+        string nodeContent = getNodeContentByNodeIndex(nodeIndex);
+        tokenizer<> tok(nodeContent);
+        for(tokenizer<>::iterator it=tok.begin(); it!=tok.end();++it) {
+            if(*it == keyword) {
+                ++termFrequency;
+            }
+        }
+    }
+
+    return (float) (1 + log(1 + log(1 + termFrequency)));
+}
+
+float Graph::computeIDF(string keyword) {
+
+    int numOfMaximalRRadiusGraph = graphIndexTermNumberTable.size();
+    int graphContainsKeyword = getGraphIndexByKeyword(keyword).size();
+
+    return (float) log(1.0 * (numOfMaximalRRadiusGraph + 1) /( graphContainsKeyword + 1));
+}
+
+float Graph::computeNDL(int graphIndex) {
+    unordered_map<int, unordered_set<int>> graph = getGraphByGraphIndex(graphIndex);
+    return computeNDL(graph);
+}
+
+float Graph::computeNDL(unordered_map<int, unordered_set<int>> graph) {
+
+    int totalTermInGraph = 0;
+    for(const auto& elem: graph){
+        int curNodeTermNumber = getNodeTermNumberByNodeIndex(elem.first);
+        totalTermInGraph += curNodeTermNumber;
+    }
+
+    if(totalTerm == 0) {
+        for(const auto& elem: graphIndexTermNumberTable){
+            totalTerm += elem.second;
+        }
+    }
+
+    float avgTermPerGraph = (float) (totalTerm / graphIndexTermNumberTable.size());
+
+    return (float) (0.8 + 0.2 * totalTermInGraph / avgTermPerGraph);
+}
+
+float Graph::computeScoreOfIR(string keyword, int graphIndex) {
+    float ntf = computeNTF(keyword, graphIndex);
+    float idf = computeIDF(keyword);
+    float ndl = computeNDL(graphIndex);
+
+    return (float) (ntf * idf / ndl);
+}
+
+float Graph::computeScoreOfIR(string keyword, unordered_map<int, unordered_set<int>> graph) {
+
+    float ntf = computeNTF(keyword, graph);
+    float idf = computeIDF(keyword);
+    float ndl = computeNDL(graph);
+
+    return (float) (ntf * idf / ndl);
+}
+
+float Graph::computeScoreOfIR(unordered_set<string> keywordSet, int graphIndex) {
+
+    float scoreOfIR = 0;
+
+    for(const string& elem: keywordSet) {
+        float temp = computeScoreOfIR(elem, graphIndex);
+        scoreOfIR += temp;
+    }
+
+    return scoreOfIR;
+}
+
+float Graph::computeScoreOfIR(unordered_set<string> keywordSet, unordered_map<int, unordered_set<int>> graph) {
+
+    float scoreOfIR = 0;
+
+    for(const string& elem: keywordSet) {
+        float temp = computeScoreOfIR(elem, graph);
+        scoreOfIR += temp;
+    }
+
+    return scoreOfIR;
+}
+
+
+
+
+
+
+
+
 
 
 
